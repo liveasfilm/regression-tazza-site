@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>회귀한 타짜 · Regression Gambler</title>
+<meta name="description" content="다 털린 날로 회귀했더니, 다음 카드가 보인다. 1997년 서울 지하 하우스를 배경으로 한 성인용 포커 이야기 게임. I went back to the night I lost everything. Now I can see the next card.">
+<meta name="theme-color" content="#14100d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="회귀한 타짜 · Regression Gambler">
+<meta property="og:description" content="다 털린 날로 회귀했더니, 다음 카드가 보인다. · I went back to the night I lost everything. Now I can see the next card.">
+<meta property="og:image" content="https://liveasfilm.github.io/regression-tazza-site/feature.png">
+<meta property="og:url" content="https://liveasfilm.github.io/regression-tazza-site/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>
+  // Language: ?lang=ko|en, then the visitor's last choice, then the browser (Korean browser → Korean).
+  (function () {
+    var lang = null;
+    try { lang = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+    if (lang !== 'ko' && lang !== 'en') { try { lang = localStorage.getItem('site.lang'); } catch (e) {} }
+    if (lang !== 'ko' && lang !== 'en') {
+      var langs = navigator.languages || [navigator.language || ''];
+      lang = /^ko\b/i.test(langs[0] || '') ? 'ko' : 'en';
+    }
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang;
+  })();
+</script>
+<style>
+  @font-face { font-family: "Black Han Sans"; src: url("fonts/BlackHanSans-site.woff2") format("woff2"); font-display: swap; }
+  :root {
+    color-scheme: dark;
+    --black: #14100d; --amber: #e9a23b; --brick: #a8402c; --cream: #efe2c4;
+    --cream-2: rgba(239, 226, 196, .74); --cream-3: rgba(239, 226, 196, .5);
+    --line: rgba(239, 226, 196, .16); --panel: rgba(239, 226, 196, .045);
+    --display: "Black Han Sans", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  }
+  html[data-lang="ko"] [data-l="en"], html[data-lang="en"] [data-l="ko"] { display: none !important; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--black); color: var(--cream); font: 16px/1.75 system-ui, -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; -webkit-text-size-adjust: 100%; }
+  body::after { /* risograph grain, as in the game */
+    content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .22; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: var(--amber); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+  /* top bar */
+  .bar { display: flex; align-items: center; gap: 12px; padding: 14px 0; }
+  .bar img { width: 40px; height: 40px; border-radius: 10px; }
+  .bar b { font-family: var(--display); font-weight: 400; font-size: 19px; letter-spacing: .01em; white-space: nowrap; }
+  .bar .sp { flex: 1; }
+  .lang { white-space: nowrap; flex: none; font: inherit; font-size: 14px; color: var(--cream); background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; cursor: pointer; }
+  .lang:hover { border-color: var(--amber); color: var(--amber); }
+
+  /* hero */
+  .art { position: relative; margin: 0 -16px; }
+  .art img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; object-position: center top; }
+  .art img { margin-bottom: -2px; }
+  .art::after { content: ""; position: absolute; inset: 0 0 -1px 0; background: linear-gradient(to bottom, rgba(20,16,13,0) 58%, rgba(20,16,13,.85) 82%, var(--black) 96%); }
+  .hero-text { position: relative; z-index: 1; margin-top: -96px; text-align: center; }
+  @media (min-width: 761px) {
+    .art img { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 16%, #000 84%, transparent 100%); }
+  }
+  .kicker { margin: 0; color: var(--amber); font-size: 14px; letter-spacing: .28em; text-transform: uppercase; }
+  h1 { margin: 2px 0 0; font-family: var(--display); font-weight: 400; font-size: clamp(46px, 10vw, 92px); line-height: 1.05; letter-spacing: .01em; }
+  html[data-lang="en"] h1 { font-size: clamp(40px, 8.4vw, 80px); }
+  .sub { margin: 6px 0 0; color: var(--cream-3); font-size: 15px; letter-spacing: .12em; }
+  .premise { margin: 18px auto 0; max-width: 34em; font-size: clamp(18px, 2.6vw, 23px); line-height: 1.55; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 20px 0 0; padding: 0; list-style: none; }
+  .chips li { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--line); font-size: 14px; color: var(--cream-2); }
+  .chips li.soon { background: var(--amber); border-color: var(--amber); color: var(--black); font-weight: 700; }
+
+  /* story rows */
+  section { margin: 72px 0 0; }
+  h2 { margin: 0 0 12px; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 4.4vw, 38px); line-height: 1.2; color: var(--cream); }
+  h2 small { display: block; font-family: system-ui, -apple-system, sans-serif; font-size: 13px; letter-spacing: .24em; color: var(--amber); margin-bottom: 6px; text-transform: uppercase; }
+  p { margin: 0 0 14px; color: var(--cream-2); }
+  .row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 36px; align-items: center; }
+  .row.flip > figure { order: 2; }
+  figure { margin: 0; }
+  .row figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; }
+  .red { color: var(--brick); font-weight: 700; }
+  .amber { color: var(--amber); }
+
+  /* heroes */
+  .heroes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .who { position: relative; border-radius: 6px; overflow: hidden; background: var(--panel); }
+  .who img { width: 100%; aspect-ratio: 600 / 760; object-fit: cover; object-position: center top; }
+  .who div { padding: 14px 16px 6px; }
+  .who h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.25; }
+  .who h3 span { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--amber); margin-left: 8px; letter-spacing: .08em; vertical-align: 3px; }
+  .who.hard h3 span { color: var(--brick); }
+  .who p { margin-top: 6px; }
+  .note { margin-top: 18px; font-size: 15px; }
+
+  /* nights */
+  .nights { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 22px; padding: 0; list-style: none; }
+  .nights li { background: var(--panel); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+  .nights img { width: 100%; aspect-ratio: 750 / 504; object-fit: cover; }
+  .nights div { padding: 10px 12px 12px; }
+  .nights .ch { margin: 0; font-size: 12px; color: var(--amber); letter-spacing: .04em; line-height: 1.4; }
+  .nights h3 { margin: 4px 0 2px; font-family: var(--display); font-weight: 400; font-size: 20px; line-height: 1.25; }
+  .nights p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--cream-3); }
+  .nights .free { display: inline-block; margin-top: 8px; font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--amber); color: var(--black); font-weight: 700; }
+
+  .list { margin: 18px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; }
+  .list li { position: relative; padding-left: 22px; color: var(--cream-2); }
+  .list li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 10px solid var(--amber); }
+
+  /* ticket */
+  .ticket { display: grid; grid-template-columns: 1fr auto; margin-top: 22px; background: var(--amber); color: var(--black); border-radius: 8px; position: relative; }
+  .ticket p { color: rgba(20, 16, 13, .82); margin: 0 0 6px; }
+  .ticket .main { padding: 24px 26px 18px; }
+  .ticket h3 { margin: 0 0 8px; font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.2; color: var(--black); }
+  .ticket .stub { padding: 24px 28px; border-left: 3px dashed rgba(20, 16, 13, .5); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .ticket .price { font-family: var(--display); font-size: 44px; line-height: 1; }
+  .ticket .once { font-size: 14px; font-weight: 700; margin-top: 6px; }
+  .ticket .stub { position: relative; }
+  .ticket .stub::before, .ticket .stub::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--black); left: -12.5px; }
+  .ticket .stub::before { top: -11px; } .ticket .stub::after { bottom: -11px; }
+  .fine { font-size: 13px; color: var(--cream-3); margin-top: 10px; }
+
+  /* notice */
+  .notice { border: 2px solid var(--brick); border-radius: 8px; padding: 18px 22px 6px; }
+  .notice h2 { font-size: 22px; color: var(--brick); margin-bottom: 8px; }
+
+  /* support */
+  .faq { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .faq div { background: var(--panel); border-radius: 6px; padding: 16px 18px 4px; }
+  .faq h3 { margin: 0 0 6px; font-size: 16px; color: var(--cream); }
+  .faq p { font-size: 15px; }
+
+  footer { margin: 80px 0 0; padding: 22px 0 48px; border-top: 1px solid var(--line); color: var(--cream-3); font-size: 14px; line-height: 1.9; }
+  footer a { color: var(--cream-2); }
+
+  @media (max-width: 760px) {
+    .art img { aspect-ratio: 1 / 1; object-position: center top; }
+    .hero-text { margin-top: -64px; }
+    .row { grid-template-columns: 1fr; gap: 18px; }
+    .row.flip > figure { order: 0; }
+    .nights { grid-template-columns: 1fr 1fr; }
+    .nights li:first-child { grid-column: 1 / -1; }
+    .list, .faq { grid-template-columns: 1fr; }
+    .ticket { grid-template-columns: 1fr; }
+    .ticket .stub { border-left: 0; border-top: 3px dashed rgba(20, 16, 13, .5); flex-direction: row; gap: 12px; padding: 16px 26px; }
+    .ticket .once { margin-top: 0; }
+    .ticket .stub::before, .ticket .stub::after { display: none; }
+    section { margin-top: 56px; }
+  }
+  @media (max-width: 420px) {
+    .bar { gap: 10px; }
+    .bar img { width: 34px; height: 34px; border-radius: 8px; }
+    .bar b { font-size: 17px; }
+    .heroes { gap: 10px; }
+    .who div { padding: 10px 12px 2px; }
+    .who h3 { font-size: 20px; }
+    .who h3 span { display: block; margin: 2px 0 0; vertical-align: 0; }
+    .who p { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="bar">
+    <img src="icon.png" alt="">
+    <b><span data-l="ko">회귀한 타짜</span><span data-l="en" lang="en">Regression Gambler</span></b>
+    <span class="sp"></span>
+    <button class="lang" type="button" id="lang"><span data-l="ko" lang="en">English</span><span data-l="en" lang="ko">한국어</span></button>
+  </header>
+
+  <div class="hero">
+    <div class="art"><img src="art/title_table.webp" width="750" height="500" alt=""></div>
+    <div class="hero-text">
+      <p class="kicker"><span data-l="ko">서울, 1997</span><span data-l="en" lang="en">Seoul, 1997</span></p>
+      <h1><span data-l="ko">회귀한 타짜</span><span data-l="en" lang="en">Regression Gambler</span></h1>
+      <p class="sub"><span data-l="ko" lang="en">Regression Gambler</span><span data-l="en" lang="ko">회귀한 타짜</span></p>
+      <p class="premise"><span data-l="ko">다 털린 날로 회귀했더니, 다음 카드가 보인다.</span><span data-l="en" lang="en">I went back to the night I lost everything. Now I can see the next card.</span></p>
+      <ul class="chips">
+        <li class="soon"><span data-l="ko">App Store 출시 준비 중</span><span data-l="en" lang="en">Coming soon to the App Store</span></li>
+        <li><span data-l="ko">첫 테이블 무료</span><span data-l="en" lang="en">First table free</span></li>
+        <li><span data-l="ko">광고 없음</span><span data-l="en" lang="en">No ads</span></li>
+        <li><span data-l="ko">성인용</span><span data-l="en" lang="en">For adults</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="row">
+    <figure><img src="art/cut_regress.webp" width="600" height="900" alt="" loading="lazy"></figure>
+    <div>
+      <div data-l="ko">
+        <h2><small>회귀</small>다시, 저녁 7시</h2>
+        <p>새벽 4시, 마지막 판. 풀하우스를 들고 포카드에 털렸다. 빚 3,000만을 지고 골목에 내던져졌다.</p>
+        <p>눈을 뜨니 그날 저녁 7시, 같은 테이블 앞이다. 그리고 이제 덱이 보인다. <span class="amber">다음 카드 두 장과 맨 밑 카드 한 장</span>이 나에게만.</p>
+      </div>
+      <div data-l="en" lang="en">
+        <h2><small>Regression</small>7 p.m., again</h2>
+        <p>4 a.m., the last hand. A full house, beaten by four of a kind. ₩30 million in debt, thrown out into the alley.</p>
+        <p>You wake up at 7 p.m. that same evening, at the same table. And now you can see the deck: <span class="amber">the next two cards, and the one at the bottom</span>. Only you.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="row flip">
+    <figure><img src="art/cut_bottom_deal.webp" width="600" height="1067" alt="" loading="lazy"></figure>
+    <div>
+      <div data-l="ko">
+        <h2><small>밑장</small>필요한 카드는 맨 밑에 있다</h2>
+        <p>그러면 밑장으로 뺀다. 상대가 딴 데를 볼 때 빼야 한다. 보고 있을 때 빼면 의심이 오르고, 의심이 차면 <span class="red">"손 멈춰!"</span> 들킨 밤은 다시 저녁 7시부터다.</p>
+        <p>회귀해도 덱 순서는 그대로다. 지난번에 본 카드가 기억이 되고, 회귀할 때마다 상대의 버릇이 하나씩 드러난다.</p>
+      </div>
+      <div data-l="en" lang="en">
+        <h2><small>The bottom deal</small>The card you need is on the bottom</h2>
+        <p>So deal it from the bottom. Wait until they look away. Do it while they're watching and suspicion climbs, and when it fills up you hear <span class="red">"Hands on the table!"</span> Get caught, and the night starts over at 7 p.m.</p>
+        <p>Going back doesn't reshuffle the deck. What you saw last time becomes memory, and every time you go back, one more of their tells shows.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><small data-l="ko">주인공 둘</small><small data-l="en" lang="en">Two heroes</small><span data-l="ko">누구로 회귀할까?</span><span data-l="en" lang="en">Who goes back?</span></h2>
+    <div class="heroes">
+      <article class="who">
+        <img src="art/hero_dongwook.webp" width="600" height="1073" alt="" loading="lazy">
+        <div data-l="ko"><h3>윤동욱<span>보통</span></h3><p>아버지 인쇄소 어음 3,000만. 내일 아침 9시까지 막아야 한다.</p></div>
+        <div data-l="en" lang="en"><h3>Danny Young<span>Normal</span></h3><p>A ₩30 million note on Dad's print shop. It has to be covered by 9 a.m. tomorrow.</p></div>
+      </article>
+      <article class="who hard">
+        <img src="art/hero_sujin.webp" width="600" height="1073" alt="" loading="lazy">
+        <div data-l="ko"><h3>차수진<span>어려움</span></h3><p>밑장 누명을 쓰고 쫓겨난 딜러. 이번엔 진짜로 뺀다.</p></div>
+        <div data-l="en" lang="en"><h3>Sue Chase<span>Hard</span></h3><p>A dealer framed for bottom dealing and thrown out. This time, she does it for real.</p></div>
+      </article>
+    </div>
+    <p class="note" data-l="ko">두 사람은 같은 밤을 산다. 한 사람으로 1장을 깨고 다른 사람으로 다시 하면, 먼저 깬 회귀자가 맞은편에 앉는다. <span class="amber">회귀자 대결</span>이다.</p>
+    <p class="note" data-l="en" lang="en">They live through the same nights. Clear chapter 1 as one, then play it as the other, and the first regressor sits down across from you. <span class="amber">The Regressor Duel.</span></p>
+  </section>
+
+  <section>
+    <h2><small data-l="ko">다섯 개의 밤</small><small data-l="en" lang="en">Five nights</small><span data-l="ko">테이블 셋, 그리고 보스</span><span data-l="en" lang="en">Three tables, then the boss</span></h2>
+    <p data-l="ko">밤마다 손님 테이블 셋을 지나 보스 앞에 앉는다. 테이블 사이에서는 군밤 장수, 커피 심부름꾼 같은 스승이 기술을 하나씩 가르쳐 준다. 장마다 따로 끝나는 이야기다.</p>
+    <p data-l="en" lang="en">Every night you work through three tables before you sit down with the boss. In between, unlikely mentors, like a chestnut vendor and a coffee runner, each teach you a trick. Every night is a story of its own.</p>
+    <ul class="nights">
+      <li>
+        <img src="art/kang_watch.webp" width="750" height="504" alt="" loading="lazy">
+        <div data-l="ko"><p class="ch">1장 · 을지로의 밤</p><h3>강 사장</h3><p>이 하우스의 사장</p><span class="free">첫 테이블 무료</span></div>
+        <div data-l="en" lang="en"><p class="ch">Chapter 1 · Euljiro Night</p><h3>Boss Kane</h3><p>He runs this house</p><span class="free">First table free</span></div>
+      </li>
+      <li>
+        <img src="art/boss_sunwoo_watch.webp" width="750" height="504" alt="" loading="lazy">
+        <div data-l="ko"><p class="ch">2장 · 압구정의 밤</p><h3>선우재원</h3><p>선우그룹 막내아들</p></div>
+        <div data-l="en" lang="en"><p class="ch">Chapter 2 · Apgujeong Night</p><h3>Jason Sterling</h3><p>Youngest son of the Sterling Group</p></div>
+      </li>
+      <li>
+        <img src="art/boss_no_watch.webp" width="750" height="504" alt="" loading="lazy">
+        <div data-l="ko"><p class="ch">3장 · 종로의 밤</p><h3>노 형사</h3><p>은퇴한 형사. 이 바닥 하우스를 30년 동안 털었다</p></div>
+        <div data-l="en" lang="en"><p class="ch">Chapter 3 · Jongno Night</p><h3>Detective Nolan</h3><p>Retired detective. Spent 30 years raiding houses like this one</p></div>
+      </li>
+      <li>
+        <img src="art/boss_malsun_watch.webp" width="750" height="504" alt="" loading="lazy">
+        <div data-l="ko"><p class="ch">4장 · 청량리의 밤</p><h3>말순 할매</h3><p>청량리 국밥집 주인. 시장 바닥에서 60년 판을 돌렸다</p></div>
+        <div data-l="en" lang="en"><p class="ch">Chapter 4 · Cheongnyangni Night</p><h3>Granny Mae</h3><p>Runs a soup house in Cheongnyangni. Sixty years dealing in the market alleys</p></div>
+      </li>
+      <li>
+        <img src="art/boss_hwang_watch.webp" width="750" height="504" alt="" loading="lazy">
+        <div data-l="ko"><p class="ch">5장 · 1997년의 마지막 밤</p><h3>황 회장</h3><p>을지로부터 청량리까지, 모든 하우스의 주인</p></div>
+        <div data-l="en" lang="en"><p class="ch">Chapter 5 · The Last Night of 1997</p><h3>Chairman Hale</h3><p>Owner of every house from Euljiro to Cheongnyangni</p></div>
+      </li>
+    </ul>
+    <ul class="list" data-l="ko">
+      <li>회귀한 뒤에는 이긴 테이블을 건너뛸 수 있다.</li>
+      <li>보스와 두 주인공은 목소리로 말한다. 한국어와 영어로 녹음했다.</li>
+      <li>밤마다 다른 음악. 첫 밤은 지하 하우스의 재즈다.</li>
+      <li>광고는 없다. 인터넷이 없어도 된다.</li>
+    </ul>
+    <ul class="list" data-l="en" lang="en">
+      <li>Once you've gone back, you can skip the tables you've already won.</li>
+      <li>The bosses and both heroes speak their lines, recorded in Korean and English.</li>
+      <li>A different score every night, starting with basement jazz.</li>
+      <li>No ads. No internet connection needed.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="ticket">
+      <div class="main" data-l="ko">
+        <h3>전체 이야기 열기</h3>
+        <p><b>다섯 개의 밤 · 보스 다섯 · 주인공 둘</b></p>
+        <p>1장의 첫 테이블은 무료로 해 볼 수 있다. 한 번 사면 회귀자 대결과 황 회장의 마지막 밤까지 다 열린다. 광고는 없고, 게임 머니는 팔지 않는다.</p>
+      </div>
+      <div class="main" data-l="en" lang="en">
+        <h3>Unlock the Full Story</h3>
+        <p><b>Five nights · five bosses · two heroes</b></p>
+        <p>The first table of chapter 1 is free. One purchase opens everything, the Regressor Duel included, all the way to Chairman Hale's last night. No ads, and no play money for sale.</p>
+      </div>
+      <div class="stub">
+        <span class="price">$9.99</span>
+        <span class="once"><span data-l="ko">한 번만</span><span data-l="en" lang="en">one-time</span></span>
+      </div>
+    </div>
+    <p class="fine" data-l="ko">미국 App Store 가격입니다. 다른 나라에서는 그 나라 App Store 가격으로 나옵니다.</p>
+    <p class="fine" data-l="en" lang="en">US App Store price. In other countries, your App Store shows the local price.</p>
+  </section>
+
+  <section class="notice">
+    <div data-l="ko">
+      <h2>성인용 게임입니다</h2>
+      <p>도박을 흉내 낸 이야기 게임입니다. 판돈은 모두 가상의 게임 머니이고, 실제 돈을 걸거나 딸 수 없으며 현금이나 경품으로 바꿀 수 없습니다. 게임 머니는 팔지 않습니다.</p>
+      <p>등장인물과 이야기는 모두 지어낸 것이며, 영화·만화 「타짜」와 관계가 없습니다.</p>
+    </div>
+    <div data-l="en" lang="en">
+      <h2>For adults</h2>
+      <p>A story game that simulates gambling. All money in it is play money: you cannot bet or win real money, and it cannot be exchanged for cash or prizes. Play money is never sold.</p>
+      <p>All characters and events are fictional and unrelated to the film or comic "Tazza".</p>
+    </div>
+  </section>
+
+  <section id="support">
+    <h2><small data-l="ko">문의</small><small data-l="en" lang="en">Support</small><span data-l="ko">도움이 필요하면</span><span data-l="en" lang="en">Need help?</span></h2>
+    <p data-l="ko">메일로 문의해 주세요: <a href="mailto:liveasfilm@gmail.com">liveasfilm@gmail.com</a></p>
+    <p data-l="en" lang="en">Email us at <a href="mailto:liveasfilm@gmail.com">liveasfilm@gmail.com</a></p>
+    <div class="faq" data-l="ko">
+      <div><h3>산 것이 열리지 않아요</h3><p>앱을 다시 설치하면 산 것은 저절로 열립니다. 열리지 않으면 메인 메뉴의 "전체 이야기 열기"에서 "구매 복원"을 누르세요. 같은 Apple 계정이면 다시 결제하지 않습니다.</p></div>
+      <div><h3>환불</h3><p>결제와 환불은 Apple이 처리합니다. <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>에서 요청할 수 있습니다. 환불되면 열렸던 장은 다시 잠깁니다.</p></div>
+      <div><h3>진행 기록</h3><p>진행, 이어하기, 설정은 이 기기 안에만 저장됩니다. 앱을 지우면 함께 지워집니다. 설정의 "진행 지우기"를 눌러도 산 것은 남습니다.</p></div>
+      <div><h3>개인정보</h3><p>회원가입, 광고, 분석 도구가 없고 개인정보를 모으지 않습니다. 자세한 내용은 <a href="privacy.html">개인정보처리방침</a>에 있습니다.</p></div>
+    </div>
+    <div class="faq" data-l="en" lang="en">
+      <div><h3>My purchase isn't unlocked</h3><p>After reinstalling, your purchase unlocks by itself. If it doesn't, open "Unlock the Full Story" from the main menu and tap "Restore purchase". With the same Apple Account you won't be charged again.</p></div>
+      <div><h3>Refunds</h3><p>Payments and refunds are handled by Apple. You can request a refund at <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>. After a refund, the unlocked chapters lock again.</p></div>
+      <div><h3>Your progress</h3><p>Progress, your saved night and settings are kept only on this device, and are deleted with the app. "Erase progress" in Settings never removes your purchase.</p></div>
+      <div><h3>Privacy</h3><p>No accounts, no ads, no analytics, and no personal data collected. See the <a href="privacy.html#en">Privacy Policy</a>.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <a href="privacy.html" data-l="ko">개인정보처리방침</a><a href="privacy.html#en" data-l="en" lang="en">Privacy Policy</a>
+    · <span data-l="ko">문의</span><span data-l="en" lang="en">Contact</span> <a href="mailto:liveasfilm@gmail.com">liveasfilm@gmail.com</a><br>
+    © 2026 Eunsuminsung Studio · <span data-l="ko">글꼴</span><span data-l="en" lang="en">Font</span> Black Han Sans (<a href="fonts/OFL-BlackHanSans.txt">SIL OFL 1.1</a>)
+  </footer>
+
+</div>
+<script>
+  document.getElementById('lang').addEventListener('click', function () {
+    var next = document.documentElement.getAttribute('data-lang') === 'ko' ? 'en' : 'ko';
+    document.documentElement.setAttribute('data-lang', next);
+    document.documentElement.lang = next;
+    try { localStorage.setItem('site.lang', next); } catch (e) {}
+    try { var u = new URL(location.href); u.searchParams.set('lang', next); history.replaceState(null, '', u); } catch (e) {}
+  });
+</script>
+</body>
+</html>

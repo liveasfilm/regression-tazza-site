@@ -86,17 +86,6 @@
   .red { color: var(--brick); font-weight: 700; }
   .amber { color: var(--amber); }
 
-  /* heroes */
-  .heroes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-  .who { position: relative; border-radius: 6px; overflow: hidden; background: var(--panel); }
-  .who img { width: 100%; aspect-ratio: 600 / 760; object-fit: cover; object-position: center top; }
-  .who div { padding: 14px 16px 6px; }
-  .who h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 24px; line-height: 1.25; }
-  .who h3 span { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: var(--amber); margin-left: 8px; letter-spacing: .08em; vertical-align: 3px; }
-  .who.hard h3 span { color: var(--brick); }
-  .who p { margin-top: 6px; }
-  .note { margin-top: 18px; font-size: 15px; }
-
   /* nights */
   .nights { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 22px; padding: 0; list-style: none; }
   .nights li { background: var(--panel); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
@@ -155,11 +144,6 @@
     .bar { gap: 10px; }
     .bar img { width: 34px; height: 34px; border-radius: 8px; }
     .bar b { font-size: 17px; }
-    .heroes { gap: 10px; }
-    .who div { padding: 10px 12px 2px; }
-    .who h3 { font-size: 20px; }
-    .who h3 span { display: block; margin: 2px 0 0; vertical-align: 0; }
-    .who p { font-size: 14px; }
   }
 </style>
 </head>
@@ -188,6 +172,20 @@
       </ul>
     </div>
   </div>
+
+  <section class="row flip">
+    <figure><img src="art/hero_dongwook.webp" width="600" height="1073" alt="" loading="lazy"></figure>
+    <div>
+      <div data-l="ko">
+        <h2><small>주인공</small>윤동욱</h2>
+        <p>1997년 겨울, 서울. 나라도 망해 가고 나도 망했다. 아버지 인쇄소의 어음 3,000만 원은 내일 아침 9시가 만기다.</p>
+      </div>
+      <div data-l="en" lang="en">
+        <h2><small>The hero</small>Danny Young</h2>
+        <p>Seoul, winter 1997. The country is going broke, and so are you. The ₩30 million note on your father's print shop is due at 9 a.m.</p>
+      </div>
+    </div>
+  </section>
 
   <section class="row">
     <figure><img src="art/cut_regress.webp" width="600" height="900" alt="" loading="lazy"></figure>
@@ -222,27 +220,9 @@
   </section>
 
   <section>
-    <h2><small data-l="ko">주인공 둘</small><small data-l="en" lang="en">Two heroes</small><span data-l="ko">누구로 회귀할까?</span><span data-l="en" lang="en">Who goes back?</span></h2>
-    <div class="heroes">
-      <article class="who">
-        <img src="art/hero_dongwook.webp" width="600" height="1073" alt="" loading="lazy">
-        <div data-l="ko"><h3>윤동욱<span>보통</span></h3><p>아버지 인쇄소 어음 3,000만. 내일 아침 9시까지 막아야 한다.</p></div>
-        <div data-l="en" lang="en"><h3>Danny Young<span>Normal</span></h3><p>A ₩30 million note on Dad's print shop. It has to be covered by 9 a.m. tomorrow.</p></div>
-      </article>
-      <article class="who hard">
-        <img src="art/hero_sujin.webp" width="600" height="1073" alt="" loading="lazy">
-        <div data-l="ko"><h3>차수진<span>어려움</span></h3><p>밑장 누명을 쓰고 쫓겨난 딜러. 이번엔 진짜로 뺀다.</p></div>
-        <div data-l="en" lang="en"><h3>Sue Chase<span>Hard</span></h3><p>A dealer framed for bottom dealing and thrown out. This time, she does it for real.</p></div>
-      </article>
-    </div>
-    <p class="note" data-l="ko">두 사람은 같은 밤을 산다. 한 사람으로 1장을 깨고 다른 사람으로 다시 하면, 먼저 깬 회귀자가 맞은편에 앉는다. <span class="amber">회귀자 대결</span>이다.</p>
-    <p class="note" data-l="en" lang="en">They live through the same nights. Clear chapter 1 as one, then play it as the other, and the first regressor sits down across from you. <span class="amber">The Regressor Duel.</span></p>
-  </section>
-
-  <section>
     <h2><small data-l="ko">다섯 개의 밤</small><small data-l="en" lang="en">Five nights</small><span data-l="ko">테이블 셋, 그리고 보스</span><span data-l="en" lang="en">Three tables, then the boss</span></h2>
-    <p data-l="ko">밤마다 손님 테이블 셋을 지나 보스 앞에 앉는다. 테이블 사이에서는 군밤 장수, 커피 심부름꾼 같은 스승이 기술을 하나씩 가르쳐 준다. 장마다 따로 끝나는 이야기다.</p>
-    <p data-l="en" lang="en">Every night you work through three tables before you sit down with the boss. In between, unlikely mentors, like a chestnut vendor and a coffee runner, each teach you a trick. Every night is a story of its own.</p>
+    <p data-l="ko">밤마다 손님 테이블 셋을 지나 보스 앞에 앉는다. 테이블 사이에서는 군밤 장수, 커피 심부름꾼 같은 스승이 기술을 하나씩 가르쳐 준다.</p>
+    <p data-l="en" lang="en">Every night you work through three tables before you sit down with the boss. In between, unlikely mentors, like a chestnut vendor and a coffee runner, each teach you a trick.</p>
     <ul class="nights">
       <li>
         <img src="art/kang_watch.webp" width="750" height="504" alt="" loading="lazy">
@@ -272,13 +252,13 @@
     </ul>
     <ul class="list" data-l="ko">
       <li>회귀한 뒤에는 이긴 테이블을 건너뛸 수 있다.</li>
-      <li>보스와 두 주인공은 목소리로 말한다. 한국어와 영어로 녹음했다.</li>
+      <li>보스와 주인공은 목소리로 말한다. 한국어와 영어로 녹음했다.</li>
       <li>밤마다 다른 음악. 첫 밤은 지하 하우스의 재즈다.</li>
       <li>광고는 없다. 인터넷이 없어도 된다.</li>
     </ul>
     <ul class="list" data-l="en" lang="en">
       <li>Once you've gone back, you can skip the tables you've already won.</li>
-      <li>The bosses and both heroes speak their lines, recorded in Korean and English.</li>
+      <li>The bosses and the hero speak their lines, recorded in Korean and English.</li>
       <li>A different score every night, starting with basement jazz.</li>
       <li>No ads. No internet connection needed.</li>
     </ul>
@@ -288,13 +268,13 @@
     <div class="ticket">
       <div class="main" data-l="ko">
         <h3>전체 이야기 열기</h3>
-        <p><b>다섯 개의 밤 · 보스 다섯 · 주인공 둘</b></p>
-        <p>1장의 첫 테이블은 무료로 해 볼 수 있다. 한 번 사면 회귀자 대결과 황 회장의 마지막 밤까지 다 열린다. 광고는 없고, 게임 머니는 팔지 않는다.</p>
+        <p><b>다섯 개의 밤 · 보스 다섯</b></p>
+        <p>1장의 첫 테이블은 무료로 해 볼 수 있다. 한 번 사면 황 회장의 마지막 밤까지 다 열린다. 광고는 없고, 게임 머니는 팔지 않는다.</p>
       </div>
       <div class="main" data-l="en" lang="en">
         <h3>Unlock the Full Story</h3>
-        <p><b>Five nights · five bosses · two heroes</b></p>
-        <p>The first table of chapter 1 is free. One purchase opens everything, the Regressor Duel included, all the way to Chairman Hale's last night. No ads, and no play money for sale.</p>
+        <p><b>Five nights · five bosses</b></p>
+        <p>The first table of chapter 1 is free. One purchase opens everything, all the way to Chairman Hale's last night. No ads, and no play money for sale.</p>
       </div>
       <div class="stub">
         <span class="price">$9.99</span>

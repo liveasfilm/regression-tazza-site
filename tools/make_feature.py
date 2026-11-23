@@ -6,30 +6,19 @@ W, H = 1024, 500
 BLACK = (0x14, 0x10, 0x0d); AMBER = (0xe9, 0xa2, 0x3b); BRICK = (0xa8, 0x40, 0x2c); CREAM = (0xef, 0xe2, 0xc4)
 img = Image.new('RGB', (W, H), BLACK)
 
-def hero(name, w):
+def hero(name, w, top):
     im = Image.open(f'{G}/art/{name}.webp').convert('RGB')
     h = round(im.height * w / im.width)
-    return im.resize((w, h), Image.LANCZOS).crop((0, 0, w, H))
+    return im.resize((w, h), Image.LANCZOS).crop((0, top, w, top + H))
 
-# two heroes on the right, cut apart by a slanted ink line (like the menu poster)
-PW = 330
-left_x, right_x = W - 2 * PW + 40, W - PW
-d_img = hero('hero_dongwook', PW + 60)
-s_img = hero('hero_sujin', PW + 60)
-img.paste(d_img, (left_x - 40, 0))
-mask = Image.new('L', (W, H), 0)
-md = ImageDraw.Draw(mask)
-slant = 70
-md.polygon([(right_x + slant, 0), (W, 0), (W, H), (right_x - slant, H)], fill=255)
-layer = Image.new('RGB', (W, H), BLACK); layer.paste(s_img, (right_x - 60, 0))
-img = Image.composite(layer, img, mask)
-d = ImageDraw.Draw(img)
-d.line([(right_x + slant, -5), (right_x - slant, H + 5)], fill=BLACK, width=10)
+# the one hero, Danny Young (윤동욱), on the right under the bulb. The second hero stays off the site (game CLAUDE.md).
+PW, TOP = 560, 40
+x0 = W - PW
+img.paste(hero('hero_dongwook', PW, TOP), (x0, 0))
 
 # fade the left edge of the art into black for the text
 fade = Image.new('L', (W, H), 0)
 fd = ImageDraw.Draw(fade)
-x0 = left_x - 40
 for x in range(0, 230):
     a = int(255 * (1 - x / 230) ** 1.4)
     fd.line([(x0 + x, 0), (x0 + x, H)], fill=a)

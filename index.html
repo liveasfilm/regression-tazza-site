@@ -107,7 +107,6 @@
   .ticket .stub { padding: 24px 28px; border-left: 3px dashed rgba(20, 16, 13, .5); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
   .ticket .price { font-family: var(--display); font-size: 44px; line-height: 1; }
   .ticket .once { font-size: 14px; font-weight: 700; margin-top: 6px; }
-  .ticket .regular { font-size: 13px; color: rgba(20, 16, 13, .72); white-space: nowrap; }
   .ticket .stub { position: relative; }
   .ticket .stub::before, .ticket .stub::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--black); left: -12.5px; }
   .ticket .stub::before { top: -11px; } .ticket .stub::after { bottom: -11px; }
@@ -135,7 +134,7 @@
     .nights li:first-child { grid-column: 1 / -1; }
     .list, .faq { grid-template-columns: 1fr; }
     .ticket { grid-template-columns: 1fr; }
-    .ticket .stub { border-left: 0; border-top: 3px dashed rgba(20, 16, 13, .5); flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-items: baseline; gap: 2px 12px; padding: 16px 26px; text-align: left; }
+    .ticket .stub { border-left: 0; border-top: 3px dashed rgba(20, 16, 13, .5); flex-direction: row; gap: 12px; padding: 16px 26px; }
     .ticket .once { margin-top: 0; }
     .ticket .stub::before, .ticket .stub::after { display: none; }
     section { margin-top: 56px; }
@@ -277,14 +276,12 @@
         <p>Everything is in: all five nights, every table, every trick. No ads. No in-app purchases. No coins, no gems, nothing else for sale.</p>
       </div>
       <div class="stub" data-l="ko">
-        <span class="price">₩5,000</span>
-        <span class="once">출시 기념가</span>
-        <span class="regular">정가 ₩10,000</span>
+        <span class="price">₩3,000</span>
+        <span class="once">한 번만</span>
       </div>
       <div class="stub" data-l="en" lang="en">
-        <span class="price">$2.99</span>
-        <span class="once">launch price</span>
-        <span class="regular">regular $5.99</span>
+        <span class="price">$1.99</span>
+        <span class="once">one-time</span>
       </div>
     </div>
     <p class="fine" data-l="ko">한국 App Store 가격입니다. 다른 나라에서는 그 나라 App Store 가격으로 나옵니다.</p>

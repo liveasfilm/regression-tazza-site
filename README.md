@@ -9,7 +9,7 @@
 
 - `index.html`: 한 쪽에 한국어와 영어를 같이 쓰고 `data-l="ko|en"` 으로 하나만 보인다. 오른쪽 위 단추로 바꾼다. 자바스크립트가 없으면 둘 다 보인다.
 - `privacy.html`: 앱이 실제로 하는 것만 적었다. 광고, 분석, 계정, 앱 자체의 네트워크 호출이 없고, 진행·이어하기·설정은 기기의 웹 저장소(아이폰 WKWebView, 안드로이드 WebView의 localStorage, `tazza.*` 일곱 키: `cleared`, `best`, `purse`, `loops`, `save`, `settings`, `muted`)에만 있다. 앱은 App Store와 Google Play에서 파는 유료 앱이고 앱 안 결제가 없어서, 구매 표시(`tazza.unlocked`)는 쓰지 않는다(게임 `web/src/store.js` 의 `isPaidApp`). 앱에 새로 무엇을 모으게 되면 이 문서를 먼저 고친다.
-- 가격: 구매 칸은 출시 기념가(한국어 ₩5,000, 영어 $2.99)를 크게, 정가(₩10,000 / $5.99)를 작게 적는다. 기준은 게임 `store/metadata.json` 의 `pricing`. 정가로 바뀌면 `.ticket .stub` 두 칸을 고친다. "50% 할인"이라고 쓰지 않는다.
+- 가격: 구매 칸(`.ticket .stub` 두 칸)은 한 가격만 적는다. 한국어 ₩3,000, 영어 $1.99(사용자 2026-11-23, 출시 기념가와 정가 구분 없음). 기준은 게임 `store/metadata.json` 의 `pricing`. 가격이 바뀌면 두 칸을 같이 고친다.
 - `art/`: 게임의 `web/art/*.webp` 를 그대로 복사했다. `icon.png`, `apple-touch-icon.png` 는 `docs/art/icon/app_icon.png` 를 줄인 것이다.
 - `feature.png`(1024×500): 링크 미리보기 그림. 구글 플레이 그래픽 이미지로도 쓸 수 있다. `python3 tools/make_feature.py` 로 다시 만든다.
 - 색은 게임의 네 가지(검정 `#14100d`, 호박색 `#e9a23b`, 벽돌색 `#a8402c`, 크림 `#efe2c4`)만 쓴다. 게임 DESIGN.md §12.
